@@ -11,3 +11,4 @@ client/gitignore
 
 .gitmodules
 seeders
+.DS_Store
