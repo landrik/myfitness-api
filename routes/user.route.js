@@ -6,6 +6,8 @@ const express = require('express');
 const multer = require('multer');
 
 const users = require('../controllers/user.controller');
+const { signup, signin, signout, requireSignin } = require('../controllers/auth.controller')
+const { userSignupValidator } = require('../validator')
 
 const FILE_TYPE_MAP = {
   'image/png': 'png',
@@ -37,10 +39,12 @@ const uploadOptions = multer({
 
 
 
-// //signup user
-// router.post('/signup', userSignupValidator, users.signup);
-// //signin user
-// router.post('/signin', users.signin);
+//signup user
+router.post('/signup', userSignupValidator, signup);
+//signin user
+router.post('/signin', signin);
+//signout user
+router.post('/', signout);
 
 
 //get all users
@@ -50,7 +54,7 @@ router.get('/', users.findAll);
 router.get('/:userId', users.findOne);
 
 //add a new user
-router.post('/', uploadOptions.single('image'), users.create);
+router.post('/', users.create);
 
 //update a single user
 router.put('/:userId', users.update);
