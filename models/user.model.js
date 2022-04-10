@@ -27,7 +27,15 @@ const UserSchema = new schema(
       about:{
         type:String,
       },
-      role:{
+      age:{
+        type: Number,
+        default: 0
+      },
+      height:{
+        type: Number,
+        default: 0
+      },
+      weight:{
         type: Number,
         default: 0
       },

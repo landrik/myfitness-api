@@ -11,6 +11,7 @@ const expressValidator = require('express-validator');
 //import routes
 const authRoutes = require('./routes/auth.route');
 const userRoutes = require('./routes/user.route');
+const exerciseRoutes = require('./routes/exercise.route');
 const workoutRoutes = require('./routes/workout.route');
 
 //app
@@ -37,10 +38,11 @@ app.use(expressValidator());
 app.use(cors());
 
 //routes middleware
-app.use('/', userRoutes);
-app.use('/api', authRoutes);
-app.use('/users', userRoutes);
-app.use('/', workoutRoutes);
+//app.use('/api', userRoutes);
+app.use('/api/', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/exercises', exerciseRoutes);
+app.use('/api/', workoutRoutes);
 
 const port = process.env.PORT || 8000;
 

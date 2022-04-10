@@ -2,13 +2,40 @@ import { Router } from 'express';
  
 //Express route
 const router = Router();
+const express = require('express');
+const multer = require('multer');
 
-//User Schema
-//const UserSchema = require('../models/user.model');
 const users = require('../controllers/user.controller');
-//const { userSignupValidator } = require('../validator')
 
-router.get('/', users.sayHi)
+const FILE_TYPE_MAP = {
+  'image/png': 'png',
+  'image/jpeg': 'jpeg',
+  'image/jpg': 'jpg'
+}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const isValid = FILE_TYPE_MAP[file.mimetype];
+    let uploadError = new Error('invalid image type');
+
+    if(isValid){
+      uploadError = null
+    }
+
+    cb(uploadError, 'public/uploads');
+  },
+  filename: function (req, file, cb) {
+    const fileName = file.originalname.split(' ').join('-');
+    const extension = FILE_TYPE_MAP[file.mimetype];
+    cb(null, `${fileName}-${Date.now()}.${extension}`)
+  }
+})
+
+const uploadOptions = multer({ 
+  storage: storage
+})
+
+
 
 // //signup user
 // router.post('/signup', userSignupValidator, users.signup);
@@ -17,18 +44,18 @@ router.get('/', users.sayHi)
 
 
 //get all users
-router.get('/users', users.findAll);
+router.get('/', users.findAll);
  
 //get a single user
-router.get('/users/:userId', users.findOne);
+router.get('/:userId', users.findOne);
 
 //add a new user
-router.post('/users', users.create);
+router.post('/', uploadOptions.single('image'), users.create);
 
 //update a single user
-router.put('/users/:userId', users.update);
+router.put('/:userId', users.update);
 
 //remove a single user
-router.delete('/users/:userId', users.delete);
+router.delete('/:userId', users.delete);
  
 module.exports = router;

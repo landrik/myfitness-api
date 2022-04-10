@@ -5,7 +5,7 @@ const router = Router();
 
 const workout = require('../controllers/workout.controller');
 
-router.get('/', (req, res ) => res.send('hello from workout route'))
+//router.get('/', (req, res ) => res.send('hello from workout route'))
 
 //get all users
 router.get('/workouts', workout.findAll);
