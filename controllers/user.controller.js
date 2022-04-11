@@ -1,6 +1,8 @@
 const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { errorHandler } = require('../helpers/dbErrorHandler');
+
 
 const req = require('express/lib/request');
 const multer = require('multer');
@@ -33,10 +35,6 @@ const uploadOptions = multer({
   storage: storage
 })
 
-exports.sayHi = (req, res) => {
-  res.json({ message: 'Hello from Node, who is you !'});
-}
-
 //Create and Save new user
 exports.create = async (req, res) => {
   const file = req.file;
@@ -46,11 +44,11 @@ exports.create = async (req, res) => {
   const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
 
   let user = new User({
-    username: req.body.username,
+    fullName: req.body.fullName,
     email: req.body.email,
     passwordHash: bcrypt.hashSync(req.body.password, 10),
     phone: req.body.phone,
-    dob: req.body.dob,
+    dateOfBirth: req.body.dateOfBirth,
     weight: req.body.weight,
     height: req.body.height,
     about: req.body.about,
@@ -66,7 +64,7 @@ exports.create = async (req, res) => {
   res.send(user)
 }
 
-//Retrieve and redturn all users from database
+//Retrieve and return all users from database
 exports.findAll = async (req, res) => {
   //res.send('GET all exercises')
   try {
@@ -153,37 +151,48 @@ exports.delete = async(req, res)=>{
 }
 
 
-exports.signin = async(req, res)=>{
-  const user = await User.findOne({email: req.body.email});
-  const secret = process.env.SECRET;
-  if(!user) return res.status(400).send('The user doesnt exit!');
-  if(user && bcrypt.compareSync(req.body.password, user.password)){
-    const token = jwt.sign(
-      {
-        userId: user.id,
-        isAdmin: user.isAdmin
-      }, 
-      secret,
-      {expiresIn: '1d'}
-    )
-    res.status(200).send({user: user.email, token:token})
-  }else{
-    res.status(400).send('password is wrong')
-  }
+exports.signin = async(req, res) => {
+  //find user based on email
+  const {email, password} = req.body
+  await User.findOne({email}, (err, user)=>{
+    if(err || !user){
+      return res.status(400).json({ 
+        err: 'User with that email does not exit, please signup'
+      })
+    }
+    //if user is found make user the email and password match
+    //create authenticate method in user method
+    if(!user.authenticate(password)){
+      return res.status(401).json({
+        err: 'Email and password don\'t match'
+      })
+    }
+
+    //generate a signed token with user id and secret
+    const token = jwt.sign({_id: user._id}, process.env.SECRET);
+    //persist the token as 't' in cookies with expiry date
+    res.cookie('t', token, {expire:new Date() + 9999})
+    //return repsonse with user and token to fron client
+    //console.log(data);
+    const {_id, fullName, email, isAdmin} = user;
+    return res.json({ token, user: {_id, email, fullName, isAdmin}})
+  })
 }
 
+//Signup a new user
 exports.signup = async (req, res) => {
-  let user = new User({
-    fullName: req.body.fullName,
-    email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 10),
-    dateOfBirth: req.body.dateOfBirth,
-  });
-
-  user = await user.save();
-  if(!user){
-    return res.status(400).send('the user cannot be created!')
-  }
-  res.send(user)
+  const user = new User(req.body);
+  await user.save((err, user) => {
+    if(err){
+      return res.status(400).json({ 
+        err: errorHandler(err)
+      })
+    }
+    user.salt = undefined;
+    user.hashedPassword = undefined;
+    res.json({
+      user
+    })
+  })
 }
 
