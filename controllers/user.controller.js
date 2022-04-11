@@ -1,7 +1,6 @@
 const User = require('../models/user.model');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const expressJwt = require('express-jwt');
-const { errorHandler } = require('../helpers/dbErrorHandler');
 
 const req = require('express/lib/request');
 const multer = require('multer');
@@ -51,7 +50,7 @@ exports.create = async (req, res) => {
     email: req.body.email,
     passwordHash: bcrypt.hashSync(req.body.password, 10),
     phone: req.body.phone,
-    age: req.body.age,
+    dob: req.body.dob,
     weight: req.body.weight,
     height: req.body.height,
     about: req.body.about,
@@ -153,4 +152,38 @@ exports.delete = async(req, res)=>{
   }
 }
 
+
+exports.signin = async(req, res)=>{
+  const user = await User.findOne({email: req.body.email});
+  const secret = process.env.SECRET;
+  if(!user) return res.status(400).send('The user doesnt exit!');
+  if(user && bcrypt.compareSync(req.body.password, user.password)){
+    const token = jwt.sign(
+      {
+        userId: user.id,
+        isAdmin: user.isAdmin
+      }, 
+      secret,
+      {expiresIn: '1d'}
+    )
+    res.status(200).send({user: user.email, token:token})
+  }else{
+    res.status(400).send('password is wrong')
+  }
+}
+
+exports.signup = async (req, res) => {
+  let user = new User({
+    fullName: req.body.fullName,
+    email: req.body.email,
+    password: bcrypt.hashSync(req.body.password, 10),
+    dateOfBirth: req.body.dateOfBirth,
+  });
+
+  user = await user.save();
+  if(!user){
+    return res.status(400).send('the user cannot be created!')
+  }
+  res.send(user)
+}
 
