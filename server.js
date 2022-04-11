@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import 'dotenv/config.js';
 import cors from 'cors';
 import express from 'express';
 import mongoose from 'mongoose';
@@ -9,7 +9,7 @@ const cookieParser = require('cookie-parser');
 const expressValidator = require('express-validator');
 
 //import routes
-const authRoutes = require('./routes/auth.route');
+const indexRoutes = require('./routes/index.route');
 const userRoutes = require('./routes/user.route');
 const exerciseRoutes = require('./routes/exercise.route');
 const workoutRoutes = require('./routes/workout.route');
@@ -39,7 +39,7 @@ app.use(cors());
 
 //routes middleware
 //app.use('/api', userRoutes);
-app.use('/api/', authRoutes);
+app.use('/api/', indexRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/exercises', exerciseRoutes);
 app.use('/api/', workoutRoutes);
