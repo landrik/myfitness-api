@@ -1,4 +1,4 @@
-import 'dotenv/config.js';
+import dotenv from 'dotenv';
 import cors from 'cors';
 import express from 'express';
 import mongoose from 'mongoose';
@@ -13,6 +13,8 @@ const indexRoutes = require('./routes/index.route');
 const userRoutes = require('./routes/user.route');
 const exerciseRoutes = require('./routes/exercise.route');
 const workoutRoutes = require('./routes/workout.route');
+
+dotenv.config()
 
 //app
 const app = express();
