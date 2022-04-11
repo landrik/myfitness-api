@@ -157,14 +157,16 @@ exports.signin = async(req, res) => {
   await User.findOne({email}, (err, user)=>{
     if(err || !user){
       return res.status(400).json({ 
-        err: 'User with that email does not exit, please signup'
+        status: "FAILED",
+        message: 'User with that email does not exit, please signup',
       })
     }
     //if user is found make user the email and password match
     //create authenticate method in user method
     if(!user.authenticate(password)){
       return res.status(401).json({
-        err: 'Email and password don\'t match'
+        status: "FAILED",
+        message: 'Email and password don\'t match',
       })
     }
 
@@ -175,7 +177,12 @@ exports.signin = async(req, res) => {
     //return repsonse with user and token to fron client
     //console.log(data);
     const {_id, fullName, email, isAdmin} = user;
-    return res.json({ token, user: {_id, email, fullName, isAdmin}})
+    return res.status(200).json({ 
+      status: "SUCCESS",
+      message: "User signed in successfully",
+      token, 
+      user: {_id, email, fullName, isAdmin},
+    })
   })
 }
 
