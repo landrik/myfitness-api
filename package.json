@@ -10,7 +10,8 @@
     "server": "nodemon --exec babel-node server.js",
     "client": "npm start --prefix client",
     "seed": "nodemon --exec babel-node seeders/seeds.js --import",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "npm run build"
   },
   "keywords": [
     "Express",
