@@ -47,5 +47,6 @@ app.use('/api/exercises', exerciseRoutes);
 app.use('/api/', workoutRoutes);
 
 const port = process.env.PORT || 8000;
+const name = process.env.APP_NAME;
 
-app.listen(port, () => console.log(`the GOFIT a MERN Boilerplate is listening on port ${port}!`));
+app.listen(port, () => console.log(`${name} is listening on port ${port}!`));
