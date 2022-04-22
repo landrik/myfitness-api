@@ -27,9 +27,9 @@ the workout tracker has a dashboard that will display your progress through out 
 5. I can retrieve part of the log of any user by also passing along optional parameters of from & to or limit. (Date format yyyy-mm-dd, limit = int)
 
 # Links
-## <img src = "readme/images/herokuLogo.png"><a href="https://myfitness-api.herokuapp.com/">Heroku</a> deployed application
+## <img src = "readme/images/herokuLogo.png" width="200"><a href="https://myfitness-api.herokuapp.com/">Heroku</a> deployed application
 
-## <img src ="readme/images/githubLogo.png"> <a href="https://github.com/landrik/myfitness-api">Github</a> code link
+## <img src ="readme/images/githubLogo.png" width="200"> <a href="https://github.com/landrik/myfitness-api">Github</a> code link
 
 # Credit
 <li>The Net Ninja's <a href ="https://www.youtube.com/watch?v=sEkRmVfc8XE&t=206s">youtube REST API Tutorial (Node, Express & Mongo) </a> tutorial</li>
